@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Terminal Poker — Web Client</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="mode-screen" class="screen">
+    <h1>&spades; Poker &hearts;</h1>
+    <p class="muted">This page works standalone — no server required for local play.</p>
+    <div class="mode-grid">
+        <button id="mode-local" class="mode-card">
+            <strong>Local Pass &amp; Play</strong>
+            <span>Hot-seat, 2-8 players sharing this device</span>
+        </button>
+        <button id="mode-ai" class="mode-card">
+            <strong>Play vs AI</strong>
+            <span>You against 1-7 computer opponents</span>
+        </button>
+        <button id="mode-online" class="mode-card">
+            <strong>Online Multiplayer</strong>
+            <span>Connect to a hosted game server over WebSocket</span>
+        </button>
+    </div>
+
+    <details id="load-panel">
+        <summary>Load a hex save instead</summary>
+        <textarea id="load-hex-input" rows="4" placeholder="Paste a POKER-SAVE-V1 hex block, or choose a file below"></textarea>
+        <input id="load-hex-file" type="file" accept=".txt" />
+        <button id="load-hex-btn">Resume from save</button>
+        <p id="load-status" class="muted"></p>
+    </details>
+</div>
+
+<div id="join-screen" class="screen hidden">
+    <h1 id="join-title">&spades; Poker &hearts;</h1>
+    <div id="join-fields"></div>
+    <button id="join-btn">Start</button>
+    <button id="back-btn" class="secondary">Back</button>
+    <p id="join-status" class="muted"></p>
+</div>
+
+<div id="table-screen" class="screen hidden">
+    <header>
+        <h1>&spades; Poker &hearts;</h1>
+        <div id="hand-info" class="muted"></div>
+    </header>
+
+    <div id="reveal-overlay" class="overlay hidden">
+        <div class="overlay-box">
+            <p id="reveal-text">Pass the device to the next player.</p>
+            <button id="reveal-btn">Reveal my cards</button>
+        </div>
+    </div>
+
+    <section id="community">
+        <div id="community-cards" class="cards"></div>
+        <div id="pot-display"></div>
+    </section>
+
+    <section id="players"></section>
+
+    <section id="controls">
+        <div id="lobby-controls" class="hidden">
+            <button id="start-btn">Start Hand</button>
+        </div>
+        <div id="action-controls" class="hidden">
+            <button id="fold-btn" class="danger">Fold</button>
+            <button id="check-btn">Check</button>
+            <button id="call-btn">Call</button>
+            <input id="amount-input" type="number" min="0" placeholder="amount" />
+            <button id="bet-btn">Bet</button>
+            <button id="raise-btn">Raise</button>
+            <button id="allin-btn" class="danger">All-in</button>
+        </div>
+        <div id="utility-controls">
+            <button id="save-btn">Export Save (hex)</button>
+            <button id="leave-btn" class="secondary">Leave table</button>
+        </div>
+    </section>
+
+    <section id="log-panel">
+        <h3>Log</h3>
+        <div id="log-lines"></div>
+    </section>
+
+    <section id="chat-panel">
+        <div id="chat-lines"></div>
+        <form id="chat-form">
+            <input id="chat-input" type="text" maxlength="200" placeholder="Say something..." />
+            <button type="submit">Send</button>
+        </form>
+    </section>
+</div>
+
+<script src="engine.bundle.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

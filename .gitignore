@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.tsbuildinfo
+ts/public/engine.bundle.js
+poker-save-*.hex.txt
+.DS_Store
+__pycache__/
+*.pyc
