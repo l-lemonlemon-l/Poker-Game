@@ -20,8 +20,12 @@
             <span>You against 1-7 computer opponents</span>
         </button>
         <button id="mode-online" class="mode-card">
-            <strong>Online Multiplayer</strong>
+            <strong>Online (Server)</strong>
             <span>Connect to a hosted game server over WebSocket</span>
+        </button>
+        <button id="mode-p2p" class="mode-card">
+            <strong>Online (P2P)</strong>
+            <span>No server — host, join by code, or quick match. Voice + text chat.</span>
         </button>
     </div>
 
@@ -42,11 +46,25 @@
     <p id="join-status" class="muted"></p>
 </div>
 
+<div id="quickmatch-screen" class="screen hidden">
+    <h1>&spades; Poker &hearts;</h1>
+    <p id="quickmatch-status" class="muted">Looking for an open table…</p>
+    <button id="quickmatch-cancel-btn" class="secondary">Cancel</button>
+</div>
+
 <div id="table-screen" class="screen hidden">
     <header>
         <h1>&spades; Poker &hearts;</h1>
         <div id="hand-info" class="muted"></div>
     </header>
+
+    <div id="room-code-banner" class="hidden"></div>
+
+    <div id="voice-controls" class="hidden">
+        <button id="voice-toggle-btn">🎤 Enable Voice Chat</button>
+        <span id="voice-status" class="muted"></span>
+    </div>
+    <div id="remote-audio" style="display:none"></div>
 
     <div id="reveal-overlay" class="overlay hidden">
         <div class="overlay-box">
@@ -96,6 +114,7 @@
 </div>
 
 <script src="engine.bundle.js"></script>
+<script src="p2p.bundle.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

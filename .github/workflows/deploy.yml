@@ -37,9 +37,9 @@ jobs:
         working-directory: ts
         run: npm test
 
-      - name: Build browser engine bundle
+      - name: Build browser bundles (engine + P2P networking)
         working-directory: ts
-        run: npm run build:web
+        run: npm run build:pages
 
       - uses: actions/configure-pages@v5
 

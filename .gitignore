@@ -2,6 +2,7 @@ node_modules/
 dist/
 *.tsbuildinfo
 ts/public/engine.bundle.js
+ts/public/p2p.bundle.js
 poker-save-*.hex.txt
 .DS_Store
 __pycache__/

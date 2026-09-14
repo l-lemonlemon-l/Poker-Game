@@ -72,6 +72,29 @@ describe('decideAction', () => {
         }
     });
 
+    test('folds a speculative preflop hand into a big bet at a full table, but can continue heads-up', () => {
+        // Regression: preflop equity used to ignore opponent count entirely, so bots would
+        // routinely shove suited connectors into 7-way action. A hand only has to beat one
+        // random opponent to be worth continuing heads-up, but has to beat all of them at a
+        // full table — the same cards should play very differently in the two spots.
+        const hand = [new Card('S', 9), new Card('S', 8)]; // 9-8 suited: fine speculative hand, not a monster
+        const ctx = {
+            hand,
+            community: [],
+            toCall: 30, // a normal-sized raise, not an overbet — the point is opponent count, not price
+            chips: 1000,
+            currentBet: 30,
+            minRaise: 20,
+            bigBlind: 10,
+            potBeforeCall: 40,
+        };
+        const headsUp = decideAction({ ...ctx, opponentsInHand: 1 });
+        const fullTable = decideAction({ ...ctx, opponentsInHand: 7 });
+
+        expect(fullTable.action).toBe('fold');
+        expect(headsUp.action).not.toBe('fold');
+    });
+
     test('never returns a bet/raise amount that exceeds available chips', () => {
         for (let i = 0; i < 20; i++) {
             const decision = decideAction({

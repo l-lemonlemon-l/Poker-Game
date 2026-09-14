@@ -125,6 +125,27 @@ button.secondary { background: var(--panel-2); color: var(--text); border: 1px s
 .overlay-box { text-align: center; max-width: 360px; }
 .overlay-box p { font-size: 1.2rem; margin-bottom: 1.2rem; }
 
+#quickmatch-screen { text-align: center; padding-top: 4rem; }
+
+#room-code-banner {
+    background: var(--panel-2);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 1rem;
+}
+#room-code-banner strong { color: var(--accent); font-size: 1.2rem; letter-spacing: 0.15rem; }
+
+#voice-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+}
+#voice-controls.active #voice-toggle-btn { background: var(--danger); color: #fff; }
+
 header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1rem; }
 
 #community {

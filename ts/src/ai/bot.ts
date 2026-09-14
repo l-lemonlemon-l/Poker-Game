@@ -87,7 +87,17 @@ function estimateEquity(hand: Card[], community: Card[], opponents: number, iter
 export function decideAction(ctx: AiContext): AiDecision {
     const { hand, community, toCall, chips, currentBet, minRaise, bigBlind, potBeforeCall, opponentsInHand } = ctx;
 
-    const equity = community.length === 0 ? preflopStrength(hand) : estimateEquity(hand, community, opponentsInHand);
+    // Preflop has no board to run a Monte Carlo rollout against, so it uses a hand-strength
+    // heuristic instead — but that heuristic is a rough "equity vs one random hand" estimate,
+    // and equity vs one opponent is not equity vs several. Approximating opponents as independent,
+    // the odds of beating all of them ~= (odds of beating one)^n, so raise it to that power. This
+    // is what keeps the AI from shoving speculative hands (suited connectors, weak aces) into a
+    // full table — postflop's estimateEquity already accounts for opponent count natively, since
+    // it deals and checks against all of their hands directly.
+    const equity =
+        community.length === 0
+            ? Math.pow(preflopStrength(hand), Math.max(1, opponentsInHand))
+            : estimateEquity(hand, community, opponentsInHand);
     const potOdds = toCall > 0 ? toCall / (potBeforeCall + toCall) : 0;
     const aggression = 0.85 + Math.random() * 0.3; // 0.85–1.15, adds variety
 
@@ -125,7 +135,13 @@ export function decideAction(ctx: AiContext): AiDecision {
     return { action: 'call' };
 }
 
-/** Quick preflop heuristic (no board yet, so Monte Carlo against a full deck is too noisy to bother with). */
+/**
+ * Quick preflop heuristic (no board yet, so Monte Carlo against a full deck is too noisy to
+ * bother with) — a rough estimate of equity heads-up against one random hand. Deliberately
+ * capped below 1.0 (0.9) rather than clamped there by the arithmetic, so that AA/KK/QQ don't
+ * all collapse to the same "certain win" value — the multiway discount above needs room to
+ * actually distinguish "premium pair" from "the absolute nuts" as opponent count grows.
+ */
 function preflopStrength(hand: Card[]): number {
     if (hand.length !== 2) return 0.3;
     const [a, b] = [...hand].sort((x, y) => y.rank - x.rank);
@@ -133,11 +149,11 @@ function preflopStrength(hand: Card[]): number {
     const suited = a.suit === b.suit;
     const gap = a.rank - b.rank;
 
-    let score = (a.rank + b.rank) / 28; // 0..1-ish, ace-king ~ 1.0
-    if (pair) score += 0.28 + a.rank / 100;
-    if (suited) score += 0.08;
-    if (!pair && gap <= 4) score += (5 - gap) * 0.015; // connectedness
-    return Math.max(0, Math.min(1, score));
+    let score = (a.rank + b.rank) / 34; // ace-king offsuit ~0.79
+    if (pair) score += 0.1 + a.rank * 0.012; // aces -> +0.268, deuces -> +0.124
+    if (suited) score += 0.05;
+    if (!pair && gap >= 1 && gap <= 4) score += (5 - gap) * 0.012; // connectedness
+    return Math.max(0.05, Math.min(0.9, score));
 }
 
 /** Convenience wrapper: builds an AiContext from live game objects and returns a decision. */
